@@ -4,7 +4,6 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
-const axios = require("axios");
 const checkUserExist = (username, password) => {
 	return users.find(
 		(user) => user.username === username && user.password === password
@@ -48,7 +47,7 @@ public_users.post("/register", (req, res) => {
 public_users.get("/", function (req, res) {
 	//Write your code here
 	if (Object.keys(books).length > 0) {
-		return res.status(200).send(JSON.stringify(books, null, 4));
+		return res.status(400).send(JSON.stringify(books, null, 4));
 	}
 	return res.status(403).json({ message: "No Books in our shop" });
 });
@@ -133,38 +132,4 @@ public_users.get("/review/:isbn", function (req, res) {
 		.json({ message: "No book has been found with this ISBN" });
 });
 
-// using async/await with axios
-const getAllBooks = async () => {
-	const res = await axios.get("http://localhost:5000/");
-	console.log(res.data);
-};
-
-const getBookByISBN = async (ISBN) => {
-	try {
-		const res = await axios.get(`http://localhost:5000/isbn/${ISBN}`);
-		console.log(res.data);
-	} catch (err) {
-		console.log(err);
-	}
-};
-
-// using promises with axios
-const getBookByAuthor = (author) => {
-	axios
-		.get(`http://localhost:5000/author/${author}`)
-		.then((res) => res.data)
-		.then((data) => console.log(data))
-		.catch((err) => console.log(err.response.data));
-};
-const getBookByTitle = (title) => {
-	axios
-		.get(`http://localhost:5000/title/${title}`)
-		.then((res) => res.data)
-		.then((data) => console.log(data))
-		.catch((err) => console.log(err.response.data));
-};
-getAllBooks();
-getBookByISBN(1);
-getBookByAuthor("dante");
-getBookByTitle("hi");
 module.exports.general = public_users;
